@@ -39,7 +39,7 @@ ADD configs configs
 
 ADD predict.sh .
 
-ENV PYTHONPATH .
+ENV PYTHONPATH src
 ENV FLASK_APP fever_cs:make_api
 
 #ENTRYPOINT ["/bin/bash","-c"]
