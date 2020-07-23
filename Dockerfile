@@ -39,9 +39,9 @@ ADD configs configs
 
 ADD predict.sh .
 
-ENV PYTHONPATH src
+ENV PYTHONPATH /fever/src
 ENV FLASK_APP fever_cs:make_api
 
 #ENTRYPOINT ["/bin/bash","-c"]
-
-CMD ["waitress-serve", "--host=0.0.0.0", "--port=5000", "--call", "fever_cs:make_api"]
+RUN cd /fever
+CMD ["sh","-c","cd /fever && PYTHONPATH=src waitress-serve --host=0.0.0.0  --port=5000 --call fever_cs:make_api"]

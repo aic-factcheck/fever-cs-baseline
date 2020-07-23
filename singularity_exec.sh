@@ -1,0 +1,1 @@
+singularity exec docker://ullriher/fever-cs-baseline /bin/sh PYTHONPATH=src waitress-serve --port=9898 --call fever_cs:make_api

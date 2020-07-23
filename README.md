@@ -14,7 +14,7 @@ It can be run with the following commands:
 docker run --rm -e CUDA_DEVICE=-1 -p 5000:5000 ullriher/fever-cs-baseline:latest
 
 #Alternatively, make predictions on a batch file and output it to `/out/predictions.jsonl` (set CUDA_DEVICE as appropriate)
-docker run --rm -e CUDA_DEVICE=-1 -v $(pwd):/out ullriher/fever-cs-baseline:latest ./predict.sh /local/fever-common/data/fever-data/paper_dev.jsonl /out/predictions.jsonl
+docker run --rm -e CUDA_DEVICE=-1 -v $(pwd):/out ullriher/fever-cs-baseline:latest bash predict.sh /local/fever-common/data/fever-data/dev.jsonl /out/predictions.jsonl
 ```
 
 ## Prediction Script
