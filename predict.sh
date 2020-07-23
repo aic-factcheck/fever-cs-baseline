@@ -3,13 +3,13 @@
 default_cuda_device=0
 root_dir=/local/fever-common
 
-ln -s $root_dir/data-cs data-cs
+ln -s $root_dir/data data
 
 echo "start evidence retrieval"
 
 python -m fever.evidence.retrieve \
-    --index $root_dir/data-cs/fever_cs-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz \
-    --database $root_dir/data-cs/fever_cs.db \
+    --index $root_dir/data/index/fever-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz \
+    --database $root_dir/data/fever/fever.db \
     --in-file $1 \
     --out-file /tmp/ir.$(basename $1) \
     --max-page 5 \
@@ -17,12 +17,12 @@ python -m fever.evidence.retrieve \
 
 echo "start prediction"
 python -m allennlp.run predict \
-    http://localhost/filename.tar.gz \
+    http://bertik.net/${model:-fever-da}.tar.gz \
     /tmp/ir.$(basename $1) \
     --output-file /tmp/labels.$(basename $1) \
     --predictor fever \
     --include-package fever.reader \
-    --cuda-device ${CUDA_DEVICE:-$ centedefault_cuda_device} \
+    --cuda-device ${CUDA_DEVICE:-$default_cuda_device} \
     --silent
 
 echo "prepare submission"

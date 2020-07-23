@@ -32,7 +32,7 @@ RUN python -c "import nltk; nltk.download('punkt')"
 
 RUN mkdir -pv src
 RUN mkdir -pv configs
-RUN wget "https://raw.githubusercontent.com/heruberuto/fever-cs-dataset/master/download_prebuilt.sh" && /bin/bash download_prebuilt.sh /local/fever-common/data
+RUN wget "https://raw.githubusercontent.com/heruberuto/fever-cs-dataset/master/download_prebuilt.sh" -O download_prebuilt.sh && /bin/bash download_prebuilt.sh /local/fever-common/data
 
 ADD src src
 ADD configs configs
