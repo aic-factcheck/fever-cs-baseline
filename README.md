@@ -1,21 +1,15 @@
 # Sample FEVER2.0 builder docker image
 
-The FEVER2.0 shared task requires builders to submit Docker images (via dockerhub) as part of the competition to allow 
-for adversarial evaluation. Images must contain a single script to make predictions on a given input file using their model and host a web server (by installing the [`fever-api`](https://github.com/j6mes/fever-api) pip package) to allow for interactive evaluation as part of the _breaker_ phase of the competition.
- 
-This repository contains an example submission based on an AllenNLP implementation of the system (see [`fever-allennlp`](https://github.com/j6mes/fever-allennlp)). We go into depth for the following key information:
+This repository contains an example FEVER-CS pipeline based on an AllenNLP implementation of the system (see [`fever-allennlp`](https://github.com/j6mes/fever-allennlp)). We go into depth for the following key information:
 
 * [Prediction Script](#prediction-script)
 * [Entrypoint](#entrypoint)
 * [Web Server](#web-server)
 * [Common Data](#common-data)
 
-It can be run with the following commands. The first command creates a dummy container with the shared FEVER data that is used by the submission.
+It can be run with the following commands:
 
-```bash
-#Set up the data container (run once on first time)
-docker create --name fever-common feverai/common
-
+```shell script
 #Start a server for interactive querying of the FEVER system via the web API on port 5000
 docker run --rm -e CUDA_DEVICE=-1 -p 5000:5000 ullriher/fever-cs-baseline:latest
 
@@ -23,18 +17,12 @@ docker run --rm -e CUDA_DEVICE=-1 -p 5000:5000 ullriher/fever-cs-baseline:latest
 docker run --rm -e CUDA_DEVICE=-1 -v $(pwd):/out ullriher/fever-cs-baseline:latest ./predict.sh /local/fever-common/data/fever-data/paper_dev.jsonl /out/predictions.jsonl
 ```
 
-### Shared Resources and Fair Use
-The FEVER2.0 submissions will be run in a shared environment where resources will be moderated. We urge participants to ensure that these shared resources are respected.
-
-Tensorflow users are asked to implement per-process GPU memory limits: [see this post](https://stackoverflow.com/questions/34199233/how-to-prevent-tensorflow-from-allocating-the-totality-of-a-gpu-memory). We will set an environment variable `$TF_GPU_MEMORY_FRACTION` that will be tweaked for all systems in phase 2 of the shared task. 
-
-
 ## Prediction Script
 The prediction script should take 2 parameters as input: the path to input file to be predicted and the path the output file to be scored:
 
 An optional `CUDA_DEVICE` environment variable should be set  
 
-```bash
+```shell script
 #!/usr/bin/env bash
 
 default_cuda_device=0
@@ -50,7 +38,7 @@ python -m fever.evidence.retrieve \
     --max-sent 5
 
 python -m allennlp.run predict \
-    https://jamesthorne.co.uk/fever/fever-da.tar.gz \
+    http://bertik.net/fever-da.tar.gz \
     /tmp/ir.$(basename $1) \
     --output-file /tmp/labels.$(basename $1) \
     --predictor fever \
@@ -69,10 +57,10 @@ python -m fever.submission.prepare \
 The submission must run a flask web server to allow for interactive evaluation. In our application, the entrypoint is a function called `my_sample_fever` in the module `sample_application` (see `sample_application.py`).
 The `my_sample_fever` function is a factory that returns a `fever_web_api` object. 
 
-``` python
+```python
 from fever.api.web_server import fever_web_api
 
-def my_sample_fever(*args):
+def make_api(*args):
     # Set up and initialize model
     ...
     
@@ -136,15 +124,13 @@ Outputs:
 ## Common Data
 We provide common data (the Wikipedia parse and the preprocessed data associated with the first FEVER challenge), that will be mounted in in `/local/fever-common` 
 
-It contains the following files (see [fever.ai/resources.html](https://fever.ai/resources.html) for more info):
+It contains the following files (see [fever-cs-dataset](https://github.com/heruberuto/fever-cs-dataset) for more info):
 
 ```
 # Dataset
 /local/fever-common/data/fever-data/train.jsonl
-/local/fever-common/data/fever-data/paper_dev.jsonl
-/local/fever-common/data/fever-data/paper_test.jsonl
-/local/fever-common/data/fever-data/shared_task_dev.jsonl
-/local/fever-common/data/fever-data/shared_task_test.jsonl
+/local/fever-common/data/fever-data/dev.jsonl
+/local/fever-common/data/fever-data/test.jsonl
 
 # Preprocessed Wikipedia Dump 
 /local/fever-common/data/fever/fever.db
@@ -154,11 +140,7 @@ It contains the following files (see [fever.ai/resources.html](https://fever.ai/
 
 # Preprocessed Wikipedia Pages (Alternative Format)
 /local/fever-common/data/wiki-pages/wiki-000.jsonl
-...
-/local/fever-common/data/wiki-pages/wiki-109.jsonl
 ```
-
-  
 
 ## Description
 
@@ -173,3 +155,6 @@ It contains the following files (see [fever.ai/resources.html](https://fever.ai/
 5. Baseline can tested by sending some input to the model: (e.g. using command line software *curl* as in this case)
 
 curl -d '{"instances": [{"id": 0, "claim": "Rys ostrovid je kočkovitá šelma."}]}' -H "Content-Type: application/json" -X POST http://localhost:5000/predict
+
+  
+
