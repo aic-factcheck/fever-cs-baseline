@@ -1,2 +1,2 @@
-#Alternatively, make predictions on a batch file and output it to `/out/predictions.jsonl` (set CUDA_DEVICE as appropriate)
+#Alternatively, make predictions on a batch file and output it to `/out/predictions_.jsonl` (set CUDA_DEVICE as appropriate)
 docker run --rm --volumes-from fever-common:ro -e CUDA_DEVICE=-1 -v $(pwd):/out feverai/sample mkdir data&&ln -s /local/fever-common/data data/fever&&wget bertik.net/docker.jsonl -O docker.jsonl &&./predict.sh /fever/docker.jsonl /out/predictions.jsonl
