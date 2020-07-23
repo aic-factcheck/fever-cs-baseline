@@ -1,0 +1,1 @@
+wget bertik.net/fever5947_8000.jsonl -O fever5947_8000.jsonl &&./predict.sh /fever/fever5947_8000.jsonl /out/predictions.jsonl
