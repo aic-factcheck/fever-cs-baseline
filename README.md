@@ -9,12 +9,22 @@ This repository contains an example FEVER-CS pipeline based on an AllenNLP imple
 
 It can be run with the following commands:
 
+## Docker
 ```shell script
 #Start a server for interactive querying of the FEVER system via the web API on port 5000
 docker run --rm -e CUDA_DEVICE=-1 -p 5000:5000 ullriher/fever-cs-baseline:latest
 
 #Alternatively, make predictions on a batch file and output it to `/out/predictions.jsonl` (set CUDA_DEVICE as appropriate)
 docker run --rm -e CUDA_DEVICE=-1 -v $(pwd):/out ullriher/fever-cs-baseline:latest bash predict.sh /local/fever-common/data/fever-data/dev.jsonl /out/predictions.jsonl
+```
+
+## Singularity
+```shell script
+#Start a server for interactive querying of the FEVER system via the web API on port 5000
+singularity run docker://ullriher/fever-cs-baseline:latest
+
+#Alternatively, make predictions on a batch file and output it to `/out/predictions.jsonl` (set CUDA_DEVICE as appropriate)
+singularity run docker://ullriher/fever-cs-baseline:latest bash predict.sh /local/fever-common/data/fever-data/dev.jsonl /tmp/predictions.jsonl
 ```
 
 ## Prediction Script
